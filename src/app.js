@@ -3,10 +3,19 @@ import { apiRouter } from './routers/api.router.js'
 import handlebars from 'express-handlebars'
 import { webRouter } from './routers/web.Router.js'
 import {Server} from 'socket.io'
+import connectMongo from 'connect-mongo'
 // import { productsManager } from './dao/productsManager.js'
 import { productsManager, messagesManager } from './dao/index.js'
+import session from 'express-session'
+import { MONGODB_CNX_STR, SESSION_SECRET } from './config.js'
+import { sesiones } from './middlewares/sesiones.js'
 
 // import {  } from './midlewares/midlewares.js'
+
+const store = connectMongo.create({
+    mongoUrl: MONGODB_CNX_STR,
+    ttl:60
+})
 
 const app = express()
 
@@ -35,6 +44,7 @@ app.use((req,res,next)=>{
     next()
 })
 
+app.use(sesiones)
 
 //Routers
 app.use('/api',apiRouter)
